@@ -725,10 +725,11 @@
     updateHazard();
   }
 
+  const TOUCH = typeof window.matchMedia==='function' && window.matchMedia('(pointer: coarse)').matches;
   const lessons=[
-    {title:'左右变道',description:'身体向一侧倾斜，或按 A / D。',icon:'←　→',done:()=>Math.abs(playerX)>1.16},
-    {title:'向上跳跃',description:'双肩快速抬起，或按空格。',icon:'↑',done:()=>playerY>.64},
-    {title:'压低身体',description:'双肩下沉并保持，或按住 S。',icon:'↓',done:()=>duckAmount>.68}
+    {title:'左右变道',description:TOUCH?'在屏幕上左右滑动。':'用鼠标左右拖动，或按 A / D。',icon:'←　→',done:()=>Math.abs(playerX)>1.16},
+    {title:'向上跳跃',description:TOUCH?'在屏幕上向上滑动。':'按住鼠标向上拖，或按空格。',icon:'↑',done:()=>playerY>.64},
+    {title:'压低身体',description:TOUCH?'在屏幕上向下滑动并按住。':'按住鼠标向下拖，或按住 S。',icon:'↓',done:()=>duckAmount>.68}
   ];
   function setTutorial(enabled) {
     preference.checked=enabled;
@@ -886,7 +887,7 @@
   }
 
   stage.addEventListener('pointerdown',event=>{
-    if(!activeInput() || event.pointerType!=='touch' || !event.isPrimary) return;
+    if(!activeInput() || !event.isPrimary) return;
     swipe={id:event.pointerId,x:event.clientX,y:event.clientY,handled:false};
     stage.setPointerCapture(event.pointerId);
   });
@@ -1327,7 +1328,7 @@
     if(!model) changeCharacter('er',false);
     openGallery.disabled=false;
     body.dataset.model='ready';
-    byId('runner-model-status').textContent='A / D 变道 · 空格跳跃 · S 下蹲';
+    byId('runner-model-status').textContent=TOUCH?'左右滑动变道 · 上滑跳跃 · 下滑下蹲':'A / D 或拖动变道 · 空格跳跃 · S 下蹲';
     start.disabled=false;
     if(QS.get('autostart')==='1') startGame(true);
   }).catch(err=>{
