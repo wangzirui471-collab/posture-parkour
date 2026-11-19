@@ -24,7 +24,12 @@ import urllib.request
 import functools
 print = functools.partial(print, flush=True)
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+# 本机安装：<MS01>/files/parkour -> <MS01>/files/outputs
 ROOTS = [
+    os.path.join(_HERE, "..", "outputs"),
+    r"D:/TH-MS01/files/outputs",
     r"D:/MS01_delivery_20261118/files/outputs",
     r"D:/shangweiji/Taihe_TH-MS01/files/outputs",
     r"C:/Users/tai-he/Desktop/Taihe_TH-MS01_20261102_ui/files/outputs",
@@ -59,6 +64,22 @@ def to17(pose33, mirror=False):
     return out
 
 
+def pick_person(people):
+    """取画面里最完整的那个人：可见点最多的优先，避免抓到残缺骨骼。"""
+    best, best_score = None, -1.0
+    for person in people:
+        pose = person.get("pose33") or []
+        if len(pose) < 33:
+            continue
+        score = 0.0
+        for i in MAP33:
+            p = pose[i]
+            score += float(p[3]) if len(p) > 3 else 1.0
+        if score > best_score:
+            best, best_score = person, score
+    return best
+
+
 def post(kps, url):
     data = json.dumps({"keypoints": kps, "width": 1, "height": 1}).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
@@ -71,6 +92,8 @@ def main():
     ap.add_argument("--url", default="http://127.0.0.1:8766/pose")
     ap.add_argument("--fps", type=float, default=30)
     ap.add_argument("--mirror", action="store_true", help="左右镜像坐标")
+    ap.add_argument("--max-age", type=float, default=2.0,
+                    help="骨骼文件超过这么多秒没更新就当作没信号（默认 2 秒）")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -100,6 +123,13 @@ def main():
         if path != last_path:
             last_path = path
             print("发现输出：%s" % path)
+        if args.max_age > 0 and time.time() - m > args.max_age:
+            # 感知台已退出或卡住：文件不再更新，别把最后一帧一直喂给游戏
+            connected = False
+            if args.verbose:
+                print("骨骼文件已 %.1f 秒未更新，暂停转发" % (time.time() - m))
+            time.sleep(0.2)
+            continue
         try:
             with open(path, "r", encoding="utf-8") as fh:
                 data = json.load(fh)
@@ -118,10 +148,15 @@ def main():
                 print("画面中暂未检测到人体")
             continue
         try:
-            kps = to17(people[0]["pose33"], args.mirror)
+            person = pick_person(people)
+            if person is None:
+                if args.verbose:
+                    print("骨骼点不足 33 点，跳过本帧")
+                continue
+            kps = to17(person["pose33"], args.mirror)
             post(kps, args.url)
             if not connected:
-                print("已接入骨骼：people=%d -> COCO-17" % len(people))
+                print("已接入骨骼：people=%d -> COCO-17（取最完整的一人）" % len(people))
                 connected = True
         except Exception as exc:
             if args.verbose:

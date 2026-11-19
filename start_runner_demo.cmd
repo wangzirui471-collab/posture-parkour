@@ -3,6 +3,7 @@ chcp 65001 >nul
 setlocal
 set "DEMO_DIR=%~dp0"
 set "PY=%DEMO_DIR%..\runtime\python.exe"
+if not exist "%PY%" set "PY=D:/TH-MS01/files/runtime/python.exe"
 if not exist "%PY%" set "PY=D:/shangweiji/Taihe_TH-MS01/files/runtime/python.exe"
 if not exist "%PY%" set "PY=python.exe"
 "%PY%" --version >nul 2>&1
