@@ -69,7 +69,7 @@ window.RunnerSeriesModel = (() => {
     if (!sources.has(key)) {
       const loading = new Promise((resolve,reject) => {
         const data = window.RUNNER_SERIES_ASSETS[key];
-        const bytes = Uint8Array.from(atob(data), char => char.charCodeAt(0));
+        const bytes = window.__b64 ? window.__b64(data) : Uint8Array.from(atob(data), char => char.charCodeAt(0));
         new T.GLTFLoader().parse(bytes.buffer,'',gltf => {
           gltf.scene.updateMatrixWorld(true);
           const mesh = gltf.scene.getObjectByProperty('isMesh',true);

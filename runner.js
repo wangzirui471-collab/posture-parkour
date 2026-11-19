@@ -20,6 +20,13 @@
     byId('fatal').textContent = message;
     byId('fatal').hidden = false;
   };
+  window.addEventListener('error',event=>{
+    if(event && event.message) failure('运行出错：'+event.message);
+  });
+  window.addEventListener('unhandledrejection',event=>{
+    const reason=event && event.reason;
+    failure('运行出错：'+((reason && reason.message) || reason || '未知错误'));
+  });
   if (!window.THREE || !window.RunnerArt || !window.RunnerObstacles || !window.RunnerModel || !window.RunnerCampaign || !window.RunnerGear || !window.RunnerSeriesModel) {
     failure('游戏资源缺失，请保留项目目录中的脚本和资源文件。');
     return;
@@ -1301,7 +1308,19 @@
   showState('ready');
   connectWS();
   requestAnimationFrame(frame);
-  Promise.all([RunnerModel.load('er'),RunnerModel.load('da'),RunnerSeriesModel.load(),Props.prepare()]).then(([er,da,series])=>{
+  const modelStatus=byId('runner-model-status');
+  const jobs=[RunnerModel.load('er'),RunnerModel.load('da'),RunnerSeriesModel.load(),Props.prepare()];
+  let loadedCount=0;
+  const reportProgress=()=>{
+    loadedCount++;
+    if(body.dataset.model!=='ready') modelStatus.textContent='正在加载角色模型… '+loadedCount+' / 4';
+  };
+  jobs.forEach(job=>Promise.resolve(job).then(reportProgress,reportProgress));
+  const watchdog=setTimeout(()=>{
+    if(body.dataset.model!=='ready') modelStatus.textContent='加载超过 45 秒，可能是网络太慢。刷新页面即可重试。';
+  },45000);
+  Promise.all(jobs).then(([er,da,series])=>{
+    clearTimeout(watchdog);
     const chaseGroup=new T.Group();
     chaseGroup.name='pursuit-actor';
     chaseGroup.visible=false;
@@ -1332,7 +1351,8 @@
     start.disabled=false;
     if(QS.get('autostart')==='1') startGame(true);
   }).catch(err=>{
+    clearTimeout(watchdog);
     console.error(err);
-    failure('角色或动物资源加载失败，请检查项目中的 assets 目录。');
+    failure('角色资源加载失败：'+((err && err.message) || err || '未知错误')+'。请刷新重试。');
   });
 })();

@@ -141,6 +141,14 @@
   <div id="fatal" role="alert" hidden></div>
 
   <script src="vendor/three.min.js"></script>
+  <script>
+    /* 快速 base64 解码：手机端逐字节回调解码会卡死，统一换成预分配循环 */
+    window.__b64 = function (source) {
+      var bin = atob(source), n = bin.length, out = new Uint8Array(n);
+      for (var i = 0; i < n; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    };
+  </script>
   <script src="vendor/GLTFLoader.js"></script>
   <script src="assets/xionger.glb.js"></script>
   <script src="assets/chase-cast.js"></script>

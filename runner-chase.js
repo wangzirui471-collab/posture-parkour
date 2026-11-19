@@ -76,7 +76,7 @@ window.RunnerChase = (() => {
   async function load() {
     const data=window.RUNNER_CAST.vick;
     delete window.RUNNER_CAST.vick;
-    const bytes=Uint8Array.from(atob(data),c=>c.charCodeAt(0));
+    const bytes=window.__b64?window.__b64(data):Uint8Array.from(atob(data),c=>c.charCodeAt(0));
     const gltf=await new Promise((ok,fail)=>new T.GLTFLoader().parse(bytes.buffer,'',ok,fail));
     gltf.scene.updateMatrixWorld(true);
     const bounds=new T.Box3().setFromObject(gltf.scene), center=bounds.getCenter(new T.Vector3());

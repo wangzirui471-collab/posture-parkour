@@ -92,7 +92,7 @@ window.RunnerModel = (() => {
   async function load(character='er') {
     const briar=character==='da';
     const source=briar ? window.RUNNER_CAST.briar : window.XIONGER_GLB;
-    const bytes = Uint8Array.from(atob(source),c=>c.charCodeAt(0));
+    const bytes = window.__b64 ? window.__b64(source) : Uint8Array.from(atob(source),c=>c.charCodeAt(0));
     if(briar) delete window.RUNNER_CAST.briar;
     else delete window.XIONGER_GLB;
     const gltf = await new Promise((resolve,reject) => {

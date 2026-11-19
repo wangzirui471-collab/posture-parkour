@@ -311,7 +311,7 @@ window.RunnerObstacles = (() => {
   async function prepare() {
     const assets=window.RUNNER_ANIMALS || {};
     await Promise.all(Object.entries(assets).map(async ([name,bytes])=>{
-      const bytesArray=Uint8Array.from(atob(bytes),c=>c.charCodeAt(0));
+      const bytesArray=window.__b64?window.__b64(bytes):Uint8Array.from(atob(bytes),c=>c.charCodeAt(0));
       const gltf=await new Promise((ok,fail)=>new T.GLTFLoader().parse(bytesArray.buffer,'',ok,fail));
       const bounds=posedBounds(gltf.scene);
       wildlife[name]={scene:gltf.scene,bounds,clips:gltf.animations};
