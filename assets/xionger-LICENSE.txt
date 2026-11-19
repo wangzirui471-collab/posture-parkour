@@ -1,0 +1,11 @@
+Model Information:
+* title:	熊二
+* source:	https://sketchfab.com/3d-models/28cf69808b174013a01f5fed6e02964e
+* author:	yuhbjn (https://sketchfab.com/yuhbjn)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "熊二" (https://sketchfab.com/3d-models/28cf69808b174013a01f5fed6e02964e) by yuhbjn (https://sketchfab.com/yuhbjn) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

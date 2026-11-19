@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#142b23">
+  <title>熊出没 · 姿态跑酷</title>
+  <link rel="stylesheet" href="runner.css">
+</head>
+<body data-state="ready" data-model="loading">
+  <div id="stage" aria-hidden="true"></div>
+  <div class="screen-shade" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">⌁</span><span>森林跑酷</span></div>
+    <div id="status" class="status" role="status"><span id="dot"></span><span id="ws-text">正在连接姿态设备</span></div>
+  </header>
+
+  <main id="overlay">
+    <section class="intro" aria-labelledby="title">
+      <p class="eyebrow"><span></span>随机路线</p>
+      <h1 id="title"><em id="character-title">熊二</em><br>姿态跑酷<span class="title-period">.</span></h1>
+      <p id="intro-copy" class="intro-copy">光头强追上来了。穿过树林和未来城，甩开他。</p>
+      <div id="match-options" class="match-options">
+        <div class="character-entry">
+          <span>角色</span>
+          <button id="cast-open" type="button" aria-haspopup="dialog" disabled>角色馆 <b aria-hidden="true">↗</b></button>
+        </div>
+        <fieldset><legend>难度</legend><div class="segments">
+          <label><input type="radio" name="difficulty" value="normal" checked><span>普通</span></label>
+          <label><input type="radio" name="difficulty" value="hard"><span>困难</span></label>
+          <label><input type="radio" name="difficulty" value="devil"><span>魔鬼</span></label>
+        </div></fieldset>
+      </div>
+      <button id="start-btn" class="primary" disabled>开始奔跑<span aria-hidden="true">↗</span></button>
+      <p id="runner-model-status" class="start-note" role="status">正在加载角色模型…</p>
+    </section>
+    <ol class="route" aria-label="部分随机场景">
+      <li><i aria-hidden="true">▲</i><strong>晨雾松林</strong></li>
+      <li><i aria-hidden="true">⌁</i><strong>峡谷断桥</strong></li>
+      <li><i aria-hidden="true">❧</i><strong>秋阳果园</strong></li>
+      <li><i aria-hidden="true">≈</i><strong>红树林潮滩</strong></li>
+      <li><i aria-hidden="true">▥</i><strong>琥珀矿洞</strong></li>
+      <li><i aria-hidden="true">✦</i><strong>黑曜石热泉谷</strong></li>
+      <li><i aria-hidden="true">▤</i><strong>霓虹未来城</strong></li>
+      <li><i aria-hidden="true">◈</i><strong>太空支线</strong></li>
+    </ol>
+  </main>
+
+  <dialog id="cast-gallery" class="cast-gallery" aria-labelledby="cast-title">
+    <header class="cast-header">
+      <div><h2 id="cast-title">角色馆</h2><span class="cast-wallet">金币余额 <b id="cast-balance">0</b></span></div>
+      <button id="cast-close" type="button" aria-label="关闭角色馆" autofocus>×</button>
+    </header>
+    <div id="cast-list" class="cast-list" aria-label="可预览的角色"></div>
+    <div class="cast-detail">
+      <div><strong id="cast-name"></strong><p id="cast-status" aria-live="polite"></p></div>
+      <button id="cast-action" class="primary" type="button"></button>
+    </div>
+  </dialog>
+
+  <section id="hud" aria-label="比赛数据" hidden>
+    <div class="scoreboard">
+      <div class="metric score-metric"><span>得分</span><strong id="score">0</strong></div>
+      <div class="metric coin-metric"><span>金币</span><strong id="coin-count">0</strong></div>
+    </div>
+    <div class="progress-card">
+      <div class="progress-title"><strong id="zone">晨雾松林</strong><span id="zone-count">第 1 段</span></div>
+      <div class="progress-track" aria-hidden="true"><i id="zone-progress"></i></div>
+    </div>
+    <div class="metric speed-metric"><span>速度</span><strong id="speed">24.0</strong></div>
+  </section>
+
+  <div id="combo" class="combo" role="status" hidden><strong id="combo-count"></strong><small id="combo-moves"></small></div>
+  <button id="pause-btn" class="pause-toggle" type="button" aria-label="暂停" title="暂停（P）" hidden>Ⅱ</button>
+  <div class="gear-rack">
+    <div id="guard" class="guard" role="status" hidden>护盾已就绪</div>
+    <div id="shoe-gear" class="guard shoe-gear" hidden>弹跳鞋 <b id="shoe-remaining"></b></div>
+  </div>
+  <div id="pursuit" class="pursuit" hidden>
+    <div><strong id="pursuit-name">光头强追近了</strong><span id="pursuit-clock"></span></div>
+    <small>再次绊脚就会被抓</small>
+  </div>
+  <div id="capture-caption" class="capture-caption" hidden>光头强追上来了！</div>
+  <div id="supply" class="supply" hidden><strong id="supply-name"></strong><span id="supply-lane"></span></div>
+  <div id="flight-banner" class="flight-banner" hidden><strong>火箭升空</strong><span>飞向轨道空间站</span></div>
+  <aside id="tutorial" class="tutorial" aria-labelledby="lesson-title" hidden>
+    <div class="lesson-heading"><span id="lesson-step">练习 1 / 3</span><button type="button" id="skip-tutorial">跳过教程</button></div>
+    <h2 id="lesson-title">左右变道</h2>
+    <p id="lesson-input">身体向左右倾斜，或按 A / D。</p>
+    <p id="lesson-visual" aria-hidden="true">←　→</p>
+  </aside>
+  <div id="hazard" class="hazard" data-move="jump" hidden><b id="hazard-icon" aria-hidden="true">↑</b><div><strong id="hazard-action"></strong><span id="hazard-name"></span></div></div>
+  <div id="hint" class="hint" hidden>
+    <span><kbd>←</kbd><kbd>→</kbd> 变道</span><span><kbd>空格</kbd> 跳跃</span><span><kbd>↓</kbd> 下蹲</span>
+    <small id="last-action">键盘或姿态控制</small>
+  </div>
+  <div class="touch-controls" id="touch-controls" hidden aria-label="触屏控制">
+    <button data-move="left" aria-label="向左变道">←</button><button data-move="right" aria-label="向右变道">→</button>
+    <button data-move="jump" aria-label="跳跃">↑</button><button data-move="duck" aria-label="按住下蹲">↓</button>
+  </div>
+
+  <canvas id="pose-preview" width="176" height="144" aria-label="姿态骨骼预览" hidden></canvas>
+  <button id="cfg-toggle" class="settings-toggle" type="button" aria-controls="cfg-panel" aria-expanded="false"><span aria-hidden="true">☷</span>设置</button>
+  <aside id="cfg-panel" class="settings" aria-labelledby="settings-title" hidden>
+    <h2 id="settings-title">设置</h2>
+    <h3>游戏</h3>
+    <div class="setting"><label for="c-sense">变道灵敏度</label><output for="c-sense" id="o-sense">100%</output><input id="c-sense" type="range" min="75" max="150" step="5" value="100"></div>
+    <div class="setting"><label for="c-swipe">触屏滑动灵敏度</label><output for="c-swipe" id="o-swipe">100%</output><input id="c-swipe" type="range" min="60" max="160" step="5" value="100"></div>
+    <div class="setting"><label for="c-volume">音效音量</label><output for="c-volume" id="o-volume">30%</output><input id="c-volume" type="range" min="0" max="100" step="5" value="30"></div>
+    <label class="check tutorial-toggle"><span>开局新手教程</span><input id="c-tutorial" type="checkbox" checked></label>
+    <label class="check"><span>障碍与补给提示</span><input id="c-guides" type="checkbox" checked></label>
+    <label class="check"><span>碰撞与转场特效</span><input id="c-effects" type="checkbox" checked></label>
+    <h3>姿态识别</h3>
+    <div class="setting"><label for="c-conf">置信度阈值</label><output for="c-conf" id="o-conf">0.60</output><input id="c-conf" type="range" min="0.1" max="1" step="0.05" value="0.6"></div>
+    <div class="setting"><label for="c-tilt">倾斜阈值</label><output for="c-tilt" id="o-tilt">0.35</output><input id="c-tilt" type="range" min="0.1" max="1" step="0.05" value="0.35"></div>
+    <div class="setting"><label for="c-cool">跳跃冷却（毫秒）</label><output for="c-cool" id="o-cool">600</output><input id="c-cool" type="range" min="200" max="2000" step="50" value="600"></div>
+    <div class="setting"><label for="c-hold">稳定帧数</label><output for="c-hold" id="o-hold">3</output><input id="c-hold" type="range" min="1" max="8" step="1" value="3"></div>
+    <label class="check"><span>反转倾斜方向</span><input id="c-inv" type="checkbox"></label>
+    <label class="check"><span>显示骨骼预览</span><input id="c-prev" type="checkbox"></label>
+    <p class="credit">角色模型集 · <a href="https://sketchfab.com/3d-models/d9b22d8425f249e7a19a639e0ca6ab1f" target="_blank" rel="noopener">Mario114514</a> · CC BY 4.0<br>熊二模型 · <a href="https://sketchfab.com/3d-models/28cf69808b174013a01f5fed6e02964e" target="_blank" rel="noopener">yuhbjn</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p>
+  </aside>
+
+  <div id="results" class="results" hidden>
+    <section class="result-card" role="dialog" aria-modal="true" aria-labelledby="finish-title">
+      <p class="eyebrow"><span></span>本次探险</p>
+      <h2 id="finish-title">被光头强抓住了</h2>
+      <p id="finish-detail"></p>
+      <div class="result-score"><strong id="big-score">0</strong><span>分</span></div>
+      <div id="result-stats" class="result-stats"><span>本局金币 <b id="result-coins">0</b></span><span>余额 <b id="result-balance">0</b></span><span>最佳连招 <b id="result-combo">0</b></span><span>最高分 <b id="result-best">0</b></span><span id="result-mode"></span></div>
+      <button id="restart-btn" class="primary">再跑一次<span aria-hidden="true">↗</span></button>
+      <button id="home-btn" class="secondary">返回起点</button>
+    </section>
+  </div>
+  <div id="paused" class="results" hidden>
+    <section class="result-card" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <h2 id="pause-title">已暂停</h2>
+      <button id="resume-btn" class="primary">继续奔跑<span aria-hidden="true">↗</span></button>
+      <button id="pause-home-btn" class="secondary">返回起点</button>
+    </section>
+  </div>
+  <div id="fatal" role="alert" hidden></div>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="vendor/GLTFLoader.js"></script>
+  <script src="assets/xionger.glb.js"></script>
+  <script src="assets/chase-cast.js"></script>
+  <script src="vendor/SkeletonUtils.js"></script>
+  <script src="assets/surfaces.js"></script>
+  <script src="assets/vegetation.js"></script>
+  <script src="assets/animals.js"></script>
+  <script src="runner-future.js"></script>
+  <script src="runner-extra-scenes.js"></script>
+  <script src="runner-art.js"></script>
+  <script src="runner-gear.js"></script>
+  <script src="runner-new-obstacles.js"></script>
+  <script src="runner-obstacles.js"></script>
+  <script src="runner-model.js"></script>
+  <script src="assets/series-cast.js"></script>
+  <script src="runner-series-model.js"></script>
+  <script src="runner-campaign.js"></script>
+  <script src="runner.js"></script>
+</body>
+</html>

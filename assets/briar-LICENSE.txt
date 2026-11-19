@@ -1,0 +1,11 @@
+Model Information:
+* title:	熊出没 所有角色
+* source:	https://sketchfab.com/3d-models/d9b22d8425f249e7a19a639e0ca6ab1f
+* author:	Poyoroid&Mario (https://sketchfab.com/GilbertGatfieldFans)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "熊出没 所有角色" (https://sketchfab.com/3d-models/d9b22d8425f249e7a19a639e0ca6ab1f) by Poyoroid&Mario (https://sketchfab.com/GilbertGatfieldFans) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

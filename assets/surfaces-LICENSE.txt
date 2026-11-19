@@ -1,0 +1,11 @@
+Photographic surfaces from Poly Haven, CC0 1.0 (https://polyhaven.com/license).
+Resampled to 512 × 512 JPEG textures for this build.
+- trail: https://polyhaven.com/a/forest_ground_04
+- forest: https://polyhaven.com/a/forrest_ground_01
+- bark: https://polyhaven.com/a/pine_bark
+- deck: https://polyhaven.com/a/wood_planks_grey
+- cliff: https://polyhaven.com/a/rock_face
+- snow: https://polyhaven.com/a/snow_02
+- riverbank: https://polyhaven.com/a/dry_river_pebbles
+- ruin: https://polyhaven.com/a/medieval_blocks_02
+- scree: https://polyhaven.com/a/rocky_trail

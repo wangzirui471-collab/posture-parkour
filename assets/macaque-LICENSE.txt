@@ -1,0 +1,11 @@
+Model Information:
+* title:	Monkey rigged blender
+* source:	https://sketchfab.com/3d-models/monkey-rigged-blender-650fb07e1e424d4c92fcdc4bbfed7b50
+* author:	Brijesh_khaped (https://sketchfab.com/Brijesh_khaped)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Monkey rigged blender" (https://sketchfab.com/3d-models/monkey-rigged-blender-650fb07e1e424d4c92fcdc4bbfed7b50) by Brijesh_khaped (https://sketchfab.com/Brijesh_khaped) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
