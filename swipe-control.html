@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1a15">
+<title>滑动变道 · UI 设计稿 | 熊出没 · 姿态跑酷</title>
+<style>
+:root{
+  color-scheme: dark;
+  --ink:#0b1a15;
+  --ink-2:#102a22;
+  --cream:#fff4d8;
+  --muted:#9db3a4;
+  --dim:#6f8579;
+  --gold:#ffc85e;
+  --lime:#bdda96;
+  --line:#eaf1d51f;
+  --line-2:#eaf1d536;
+  --surface:#ffffff08;
+  --edge:clamp(18px,5vw,84px);
+  --font:"Microsoft YaHei","PingFang SC","Heiti SC","Hiragino Sans GB",system-ui,sans-serif;
+  --mono:"Trebuchet MS","SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--font);color:var(--cream);background:var(--ink);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  background-image:
+    radial-gradient(900px 520px at 82% -8%,#1d4536 0%,transparent 62%),
+    radial-gradient(700px 480px at 4% 8%,#173a2d 0%,transparent 58%),
+    radial-gradient(800px 600px at 50% 108%,#122e24 0%,transparent 60%);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(circle at 50% 22%,#000 0%,transparent 78%);
+  mask-image:radial-gradient(circle at 50% 22%,#000 0%,transparent 78%);
+}
+.wrap{position:relative;z-index:1}
+
+/* ───────── 顶栏 ───────── */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px var(--edge);
+  background:#0b1a15d9;-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.03em;font-size:15px;min-width:0}
+.brand-mark{
+  display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(160deg,#d8eeae,#a8cd7f);color:#123024;
+  font:900 27px/1 Georgia,serif;padding-bottom:4px;box-shadow:0 4px 16px #bdda9626;
+}
+.brand-txt{min-width:0}
+.brand-txt small{display:block;color:var(--dim);font-size:9.5px;font-weight:800;letter-spacing:.18em;margin-top:3px;white-space:nowrap}
+.topbar-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);flex:none}
+.tag{
+  padding:6px 11px;border:1px solid var(--line-2);border-radius:100px;
+  background:var(--surface);letter-spacing:.05em;white-space:nowrap;
+}
+.tag.live{color:var(--lime);border-color:#bdda9640}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lime);margin-right:6px;
+  box-shadow:0 0 10px var(--lime);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media(max-width:600px){
+  .brand-txt small{display:none}
+  .topbar-meta .tag:last-child{display:none}
+}
+
+/* ───────── 骨架 ───────── */
+section{padding:clamp(44px,8vh,104px) var(--edge)}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:clamp(20px,4vh,40px);flex-wrap:wrap}
+.sec-num{
+  font:800 11px/1 var(--mono);color:var(--gold);letter-spacing:.2em;
+  padding:6px 9px;border:1px solid #ffc85e33;border-radius:8px;background:#ffc85e0f;flex:none;
+}
+.sec-head h2{margin:0;font-size:clamp(20px,2.6vw,34px);font-weight:950;letter-spacing:-.02em}
+.sec-head p{margin:0;color:var(--dim);font-size:12.5px;letter-spacing:.04em}
+
+/* ───────── Hero ───────── */
+.hero{padding-top:clamp(32px,6vh,80px);padding-bottom:clamp(18px,3vh,34px);
+  display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,5vw,64px);align-items:center}
+@media(max-width:940px){.hero{grid-template-columns:1fr}}
+.hero>div{min-width:0}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;color:var(--lime);
+  font-size:11px;font-weight:900;letter-spacing:.24em;margin:0 0 18px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:block}
+h1{margin:0;font-size:clamp(38px,6.4vw,86px);font-weight:1000;line-height:1.04;letter-spacing:-.055em}
+h1 em{font-style:normal;color:var(--gold)}
+.hero-copy{margin:20px 0 0;color:#c6d5c6;font-size:clamp(13px,1.3vw,16px);line-height:1.85;max-width:46ch}
+.hero-copy b{color:var(--cream);font-weight:800}
+.hero-copy code{font-family:var(--mono);background:#ffffff10;padding:1px 6px;border-radius:5px;color:var(--lime);font-size:.92em}
+.specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:26px 0 0;padding:0;list-style:none;
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);max-width:520px}
+.specs li{padding:13px 14px;min-width:0}
+.specs li + li{border-left:1px solid var(--line)}
+.specs li:nth-child(4){border-left:0}
+.specs li:nth-child(n+4){border-top:1px solid var(--line)}
+.specs span{display:block;color:var(--dim);font-size:10px;letter-spacing:.1em;margin-bottom:6px;white-space:nowrap}
+.specs strong{font:800 18px/1 var(--mono);color:var(--cream);font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:400px){.specs strong{font-size:16px}.specs li{padding:11px 11px}}
+
+/* ───────── 滑动板 ───────── */
+.pad-card{
+  position:relative;padding:clamp(18px,3vw,28px);border-radius:22px;
+  border:1px solid var(--line-2);
+  background:linear-gradient(165deg,#16382c,#0e241d 55%,#0c1f19);
+  box-shadow:0 26px 70px -30px #000,inset 0 1px 0 #ffffff0d;
+  overflow:hidden;min-width:0;
+}
+.pad-card::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(340px 160px at 50% 0%,#bdda9614,transparent 70%)}
+.pad-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;position:relative;z-index:1}
+.pad-head strong{font-size:13px;letter-spacing:.08em}
+.pad-head span{font:800 10px/1 var(--mono);color:var(--dim);letter-spacing:.1em;white-space:nowrap}
+.pad{
+  position:relative;height:clamp(78px,9vw,104px);border-radius:16px;border:1px solid var(--line-2);
+  background:#081410;overflow:hidden;touch-action:none;cursor:grab;
+}
+.pad:active{cursor:grabbing}
+.pad-zone{position:absolute;top:0;bottom:0;width:50%;display:flex;align-items:center;padding:0 14px}
+.pad-zone.left{left:0;background:linear-gradient(90deg,#ffc85e1a,transparent 82%);justify-content:flex-start}
+.pad-zone.right{right:0;background:linear-gradient(270deg,#ffc85e1a,transparent 82%);justify-content:flex-end}
+.pad-zone i{font-style:normal;font-size:9.5px;letter-spacing:.14em;color:#ffc85e8c;font-weight:900;white-space:nowrap}
+.pad-center{position:absolute;left:50%;top:0;bottom:0;width:22%;transform:translateX(-50%);
+  border-left:1px dashed #eaf1d52e;border-right:1px dashed #eaf1d52e;background:#ffffff06}
+.pad-th{position:absolute;top:0;bottom:0;width:2px;background:#ffc85e55}
+.finger{
+  position:absolute;top:50%;left:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
+  border-radius:50%;display:grid;place-items:center;font-size:23px;
+  background:radial-gradient(circle at 38% 32%,#ffe6a8,#ffc85e 62%,#e0a53c);
+  color:#4a3410;box-shadow:0 0 0 6px #ffc85e1f,0 10px 30px -6px #ffc85e66;
+  transition:transform .06s linear;will-change:transform;
+}
+.finger::after{content:"";position:absolute;inset:-13px;border-radius:50%;border:1px solid #ffc85e33}
+.pad-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px;
+  font:800 10.5px/1 var(--mono);color:var(--dim);letter-spacing:.06em;position:relative;z-index:1}
+.pad-meta b{color:var(--lime);font-size:12.5px}
+.pad-hint{margin:14px 0 0;color:var(--dim);font-size:11.5px;letter-spacing:.05em;text-align:center;position:relative;z-index:1}
+
+/* ───────── 三步 ───────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:20px;overflow:hidden}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{background:#0d221b;padding:clamp(18px,2.6vw,30px)}
+.step:hover{background:#112b21}
+.step-n{font:800 10px/1 var(--mono);color:var(--gold);letter-spacing:.2em;margin-bottom:14px;display:block}
+.step h3{margin:0 0 9px;font-size:15.5px;font-weight:900;letter-spacing:-.01em}
+.step p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.8}
+.step code{font-family:var(--mono);background:#ffffff0f;padding:2px 6px;border-radius:5px;color:var(--lime);font-size:11.5px}
+.step-fig{height:44px;margin-bottom:16px;display:flex;align-items:center}
+.bar{height:6px;border-radius:3px;background:#ffffff17;flex:1;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;width:30%;background:linear-gradient(90deg,#bdda96,#ffc85e);border-radius:3px}
+
+/* ───────── 沙盘 ───────── */
+.lab-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(18px,3vw,32px);align-items:start}
+@media(max-width:980px){.lab-grid{grid-template-columns:minmax(0,1fr)}}
+.stage{
+  position:relative;aspect-ratio:16/10;border-radius:22px;overflow:hidden;
+  border:1px solid var(--line-2);background:#08170f;
+  touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
+  box-shadow:0 30px 80px -40px #000,inset 0 0 90px #00000066;min-width:0;
+}
+@media(max-width:560px){.stage{aspect-ratio:4/3;border-radius:18px}}
+.stage:active{cursor:grabbing}
+.sky{position:absolute;inset:0;background:linear-gradient(180deg,#0a231b,#164133 46%,#1b4a33 62%,#12301f)}
+.sky::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(420px 200px at 50% 78%,#ffc85e2e,transparent 70%),
+             radial-gradient(600px 300px at 8% 8%,#bdda9618,transparent 70%)}
+.hill{position:absolute;left:-6%;right:-6%;bottom:32%;height:34%;background:#0f3826;
+  border-radius:50% 50% 0 0/100% 100% 0 0;opacity:.85}
+.hill.b{bottom:36%;height:26%;background:#133f2a;opacity:.6;left:22%;right:-18%}
+.road{position:absolute;left:0;right:0;bottom:0;height:40%;
+  background:linear-gradient(180deg,#1a3a2a,#0d1f17);clip-path:polygon(41% 0,59% 0,80% 100%,20% 100%)}
+.lane-lines{position:absolute;left:0;right:0;bottom:0;height:40%;overflow:hidden}
+.lane-lines i{position:absolute;top:-20%;width:3px;height:26%;border-radius:2px;
+  background:linear-gradient(180deg,transparent,#bdda9677,transparent);animation:dash 1.05s linear infinite}
+.lane-lines i:nth-child(1){left:43%}
+.lane-lines i:nth-child(2){left:57%}
+.lane-lines i:nth-child(3){left:36%;animation-delay:.35s;height:16%;opacity:.55}
+.lane-lines i:nth-child(4){left:64%;animation-delay:.35s;height:16%;opacity:.55}
+@keyframes dash{from{transform:translateY(-40%)}to{transform:translateY(460%)}}
+.rocks{position:absolute;left:0;right:0;bottom:0;height:44%;pointer-events:none;overflow:hidden}
+.rock{
+  position:absolute;top:0;width:clamp(16px,4.2%,30px);height:clamp(14px,3.6%,26px);
+  border-radius:8px 11px 6px 9px;background:linear-gradient(150deg,#71805b,#39452f);
+  box-shadow:inset 0 -5px 10px #00000055,0 6px 16px #00000055;
+  animation:rush 2.1s linear infinite;
+}
+@keyframes rush{0%{top:-12%;transform:scale(.3);opacity:0}16%{opacity:.95}100%{top:70%;transform:scale(1.1);opacity:1}}
+.trees{position:absolute;left:0;right:0;bottom:34%;height:24%;pointer-events:none}
+.trees i{position:absolute;bottom:0;width:0;height:0;border-left:9px solid transparent;
+  border-right:9px solid transparent;border-bottom:28px solid #0a2a1b;opacity:.8}
+.runner{
+  position:absolute;bottom:16%;left:50%;width:clamp(34px,7%,62px);transform:translateX(-50%);
+  transition:transform .26s cubic-bezier(.3,1.5,.45,1);filter:drop-shadow(0 10px 18px #00000088);z-index:4;
+}
+.runner svg{display:block;width:100%;height:auto}
+.runner.bump svg{animation:bump .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bump{50%{transform:translateY(-13px) scale(1.07)}}
+.stage-hud{position:absolute;inset:10px 10px auto;display:flex;justify-content:space-between;gap:6px;
+  z-index:6;pointer-events:none}
+.hud-chip{padding:6px 10px;border-radius:10px;border:1px solid var(--line-2);
+  background:#06120ed9;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  font:800 10.5px/1 var(--mono);letter-spacing:.05em}
+.hud-chip span{display:block;color:var(--dim);font-size:8px;letter-spacing:.12em;margin-bottom:4px}
+.hud-chip b{font-size:13px;color:var(--cream)}
+.lane-pill{display:flex;gap:3px;margin-top:3px;justify-content:center}
+.lane-pill i{width:14px;height:4px;border-radius:2px;background:#ffffff22;transition:background .2s,width .2s}
+.lane-pill i.on{background:var(--gold);width:19px}
+.stage-msg{position:absolute;left:50%;bottom:22%;transform:translateX(-50%);z-index:5;
+  font:900 11px/1 var(--font);letter-spacing:.2em;color:var(--gold);
+  opacity:0;transition:opacity .18s,transform .18s;white-space:nowrap}
+.stage-msg.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
+@media(max-width:430px){
+  .hud-chip{padding:5px 8px;font-size:9.5px}
+  .hud-chip b{font-size:12px}
+  .hud-chip span{font-size:7px}
+}
+
+/* 面板 */
+.panel{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{border:1px solid var(--line);border-radius:18px;padding:clamp(15px,2.2vw,22px);
+  background:linear-gradient(170deg,#ffffff09,#ffffff03)}
+.card h4{margin:0 0 13px;font-size:11.5px;letter-spacing:.14em;color:var(--muted);font-weight:900}
+.meter{margin-bottom:14px}
+.meter:last-child{margin-bottom:0}
+.meter-top{display:flex;justify-content:space-between;font:800 10.5px/1 var(--mono);color:var(--dim);
+  margin-bottom:8px;letter-spacing:.05em;gap:8px}
+.meter-top b{color:var(--cream);white-space:nowrap}
+.meter-bar{height:8px;border-radius:5px;background:#ffffff12;position:relative;overflow:hidden}
+.meter-bar i{position:absolute;inset:0;width:0%;border-radius:5px;background:linear-gradient(90deg,var(--lime),var(--gold));transition:width .1s linear}
+.keys{display:flex;gap:7px;flex-wrap:wrap}
+kbd{font-family:var(--mono);font-size:10.5px;font-weight:800;padding:6px 10px;border-radius:8px;
+  background:#ffffff0d;border:1px solid var(--line-2);border-bottom-width:2px;color:#dbe7c7;white-space:nowrap}
+.note{color:var(--dim);font-size:11.5px;line-height:1.75;margin:11px 0 0}
+
+/* ───────── 一致性 ───────── */
+.parity{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:20px;overflow:hidden}
+@media(max-width:760px){.parity{grid-template-columns:1fr}}
+.parity-col{background:#0d221b;padding:clamp(18px,2.4vw,28px)}
+.parity-col h3{margin:0 0 4px;font-size:14px;font-weight:900;display:flex;align-items:center;gap:9px}
+.parity-col h3 i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block;flex:none}
+.parity-col p.sub{margin:0 0 16px;color:var(--dim);font-size:11px;letter-spacing:.08em}
+.parity-col dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 14px;font-size:12.5px;align-items:baseline}
+.parity-col dt{color:var(--dim);white-space:nowrap}
+.parity-col dd{margin:0;color:#dbe7c7;font-weight:700}
+.parity-col dd code{font-family:var(--mono);font-size:11px;color:var(--lime);background:#ffffff0d;padding:1px 5px;border-radius:4px}
+.parity-same{margin-top:18px;display:flex;align-items:center;gap:10px;color:var(--lime);
+  font-size:11.5px;font-weight:800;letter-spacing:.06em}
+.parity-same::before{content:"≡";font-size:17px;line-height:1}
+
+/* ───────── HUD 稿 ───────── */
+.hud-mock{position:relative;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;
+  background:#0a1d16;padding:14px;min-height:180px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:10px}
+@media(max-width:600px){.hud-mock{grid-template-columns:1fr 1fr;gap:8px}.hud-mock .hm.center{grid-column:1/-1;order:-1;max-width:none}}
+.hm{background:#ffffff0a;border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.hm span{display:block;font-size:9px;letter-spacing:.1em;color:var(--dim);margin-bottom:6px}
+.hm strong{font:800 20px/1 var(--mono);font-variant-numeric:tabular-nums}
+.hm.center{justify-self:center;width:100%;max-width:260px;text-align:center}
+.hm.center strong{font:900 13px/1.4 var(--font)}
+.hm.center .track{height:4px;border-radius:2px;background:#ffffff17;margin-top:11px;overflow:hidden}
+.hm.center .track i{display:block;height:100%;width:42%;background:var(--gold);border-radius:2px}
+.hm.right{justify-self:end;text-align:right}
+.gesture-float{grid-column:1/-1;justify-self:center;margin-top:6px;
+  padding:8px 15px;border-radius:100px;border:1px solid #ffc85e33;background:#ffc85e12;
+  color:var(--gold);font:800 10.5px/1 var(--font);letter-spacing:.14em;white-space:nowrap}
+
+/* ───────── 状态表 ───────── */
+.table{border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.tr{display:grid;grid-template-columns:1.05fr .8fr 1.6fr;gap:12px;padding:14px clamp(13px,2vw,22px);
+  align-items:center;font-size:12.5px}
+.tr.head{background:#ffffff08;color:var(--dim);font-size:10px;letter-spacing:.14em;font-weight:900}
+.tr+.tr{border-top:1px solid var(--line)}
+@media(max-width:720px){
+  .tr{grid-template-columns:1fr;gap:5px;padding:13px 15px}
+  .tr.head{display:none}
+  .tr>span:nth-child(2){display:none}
+}
+.swatch{display:inline-flex;align-items:center;gap:9px;font-weight:800}
+.swatch i{width:9px;height:9px;border-radius:50%;display:block;flex:none}
+.tr span:last-child{color:var(--muted);line-height:1.65}
+.tr code{font-family:var(--mono);font-size:11px;color:var(--lime);background:#ffffff0d;padding:2px 6px;border-radius:5px}
+
+footer{padding:clamp(28px,6vh,60px) var(--edge);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:11.5px;line-height:1.8}
+footer b{color:var(--muted)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">⌁</span>
+      <div class="brand-txt">滑动变道 UI<small>SWIPE LANE CONTROL</small></div>
+    </div>
+    <div class="topbar-meta">
+      <span class="tag live"><span class="dot"></span>设计稿 v0.2</span>
+      <span class="tag">熊出没 · 姿态跑酷</span>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section class="hero" id="top">
+    <div>
+      <p class="eyebrow">01 / 控制原理</p>
+      <h1>手指一划，<br><em>就变道。</em></h1>
+      <p class="hero-copy">
+        在屏幕上按下，左右滑动。滑动距离越过阈值就切一条道。
+        <b>不用摄像头，不用倾斜，不用按键。</b>手机是手指，电脑是鼠标按住拖动，
+        走的是同一套 <code>Pointer Events</code>、同一段判定代码，所以两端手感完全一致。
+      </p>
+      <ul class="specs">
+        <li><span>滑动阈值</span><strong>35px</strong></li>
+        <li><span>方向锁定</span><strong>8px</strong></li>
+        <li><span>单次手势</span><strong>1 次变道</strong></li>
+        <li><span>变道用时</span><strong>260ms</strong></li>
+        <li><span>车道数</span><strong>3</strong></li>
+        <li><span>输入源</span><strong>Pointer</strong></li>
+      </ul>
+    </div>
+
+    <div class="pad-card">
+      <div class="pad-head">
+        <strong>滑动区</strong>
+        <span>SWIPE / DRAG</span>
+      </div>
+      <div class="pad" id="pad" role="slider" aria-label="滑动位移" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" tabindex="0">
+        <div class="pad-zone left"><i>← 左变道</i></div>
+        <div class="pad-zone right"><i>右变道 →</i></div>
+        <div class="pad-center" id="dead"></div>
+        <div class="pad-th" id="th-l"></div>
+        <div class="pad-th" id="th-r"></div>
+        <div class="finger" id="finger" aria-hidden="true">☝</div>
+      </div>
+      <div class="pad-meta">
+        <span>位移 <b id="dx-read">0px</b></span>
+        <span>状态 <b id="pad-state">待机</b></span>
+        <span>车道 <b id="pad-lane">2</b></span>
+      </div>
+      <p class="pad-hint">按住这里左右划，和真机上完全一样的判定</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="principle">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>三段式判定</h2>
+      <p>按下 → 算位移 → 越阈触发，一次手势一条道</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <span class="step-n">STEP 1</span>
+        <div class="step-fig"><div class="bar"><i style="width:18%"></i></div></div>
+        <h3>按下记起点</h3>
+        <p><code>pointerdown</code> 记下 <code>startX / startY</code>。横向位移超过 8px 且大于纵向，才锁定为滑动，否则交还给页面滚动。</p>
+      </article>
+      <article class="step">
+        <span class="step-n">STEP 2</span>
+        <div class="step-fig"><div class="bar"><i style="width:48%"></i></div></div>
+        <h3>算水平位移</h3>
+        <p><code>dx = clientX − startX</code>，单位固定为 CSS px。手机和电脑用同一把尺子，不存在缩放后手感变钝。</p>
+      </article>
+      <article class="step">
+        <span class="step-n">STEP 3</span>
+        <div class="step-fig"><div class="bar"><i style="width:86%"></i></div></div>
+        <h3>越阈触发变道</h3>
+        <p><code>|dx| ≥ 35</code> 立即变道，并标记本次手势已用——抬手前再划多远都不再触发，划过头也不会连切两道。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="lab">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>交互沙盘</h2>
+      <p>在画面上左右滑动，或按 ← →</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="stage" id="stage" aria-label="跑酷沙盘，左右滑动切换车道">
+        <div class="sky"></div>
+        <div class="hill"></div>
+        <div class="hill b"></div>
+        <div class="road"></div>
+        <div class="lane-lines"><i></i><i></i><i></i><i></i></div>
+        <div class="trees" aria-hidden="true">
+          <i style="left:3%;transform:scale(1.35)"></i>
+          <i style="left:13%;transform:scale(.8)"></i>
+          <i style="left:24%;transform:scale(1.1)"></i>
+          <i style="right:6%;transform:scale(1.25)"></i>
+          <i style="right:17%;transform:scale(.9)"></i>
+          <i style="right:27%;transform:scale(1.05)"></i>
+        </div>
+        <div class="rocks" aria-hidden="true">
+          <span class="rock" style="left:34%;animation-delay:0s"></span>
+          <span class="rock" style="left:41%;animation-delay:.7s"></span>
+          <span class="rock" style="left:49%;animation-delay:1.45s"></span>
+          <span class="rock" style="left:56%;animation-delay:.35s"></span>
+          <span class="rock" style="left:63%;animation-delay:1.1s"></span>
+          <span class="rock" style="left:45%;animation-delay:1.8s"></span>
+        </div>
+
+        <div class="stage-hud">
+          <div class="hud-chip"><span>得分</span><b id="h-score">0</b></div>
+          <div class="hud-chip" style="text-align:center"><span>车道</span><div class="lane-pill" id="pill"><i></i><i></i><i></i></div></div>
+          <div class="hud-chip" style="text-align:right"><span>滑动</span><b id="h-swipe">—</b></div>
+        </div>
+
+        <div class="runner" id="runner">
+          <svg viewBox="0 0 60 84" aria-hidden="true">
+            <ellipse cx="30" cy="80" rx="17" ry="4" fill="#000" opacity=".45"/>
+            <ellipse cx="30" cy="66" rx="14" ry="14" fill="#8a5a2c"/>
+            <circle cx="30" cy="30" r="17" fill="#a06a33"/>
+            <circle cx="23.5" cy="26" r="4.6" fill="#2a1a0c"/>
+            <circle cx="36.5" cy="26" r="4.6" fill="#2a1a0c"/>
+            <circle cx="24.4" cy="24.4" r="1.5" fill="#fff" opacity=".85"/>
+            <circle cx="35.6" cy="24.4" r="1.5" fill="#fff" opacity=".85"/>
+            <ellipse cx="30" cy="37" rx="6" ry="4.4" fill="#e8c9a0"/>
+            <ellipse cx="30" cy="35.4" rx="2.6" ry="1.9" fill="#3a2513"/>
+            <circle cx="13.5" cy="18" r="4.4" fill="#a06a33"/>
+            <circle cx="46.5" cy="18" r="4.4" fill="#a06a33"/>
+            <ellipse cx="18" cy="60" rx="6" ry="9" fill="#7d4f26" transform="rotate(-18 18 60)"/>
+            <ellipse cx="42" cy="60" rx="6" ry="9" fill="#7d4f26" transform="rotate(18 42 60)"/>
+          </svg>
+        </div>
+        <div class="stage-msg" id="stage-msg"></div>
+      </div>
+
+      <div class="panel">
+        <div class="card">
+          <h4>实时读数</h4>
+          <div class="meter">
+            <div class="meter-top"><span>水平位移 dx</span><b id="p-dx">0 px</b></div>
+            <div class="meter-bar"><i id="p-dx-bar"></i></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>阈值进度</span><b id="p-th">0%</b></div>
+            <div class="meter-bar"><i id="p-th-bar"></i></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>本次手势</span><b id="p-cool">未触发</b></div>
+            <div class="meter-bar"><i id="p-cool-bar" style="width:0%"></i></div>
+          </div>
+          <p class="note">位移到达 35px 即刻变道；从按下到抬手只触发一次，手抖或划过头都不会连切两道。</p>
+        </div>
+
+        <div class="card">
+          <h4>操作方式</h4>
+          <div class="keys">
+            <kbd>手指滑动</kbd><kbd>鼠标拖动</kbd><kbd>←</kbd><kbd>→</kbd>
+          </div>
+          <p class="note">键盘只是模拟器；正式游玩时触屏和鼠标走同一条管线，没有第二套逻辑。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 一致性 -->
+  <section id="parity">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>手机 / 电脑一致</h2>
+      <p>同一份代码，同一套事件，只有手指和鼠标之分</p>
+    </div>
+    <div class="parity">
+      <div class="parity-col">
+        <h3><i aria-hidden="true"></i>手机 / 平板</h3>
+        <p class="sub">TOUCH</p>
+        <dl>
+          <dt>输入</dt><dd>手指按下并滑动</dd>
+          <dt>事件</dt><dd><code>pointer*</code>（touch 同源）</dd>
+          <dt>阈值</dt><dd>35 CSS px</dd>
+          <dt>纵向滚动</dt><dd><code>touch-action: pan-y</code> 放行</dd>
+          <dt>回弹</dt><dd>抬手 180ms 归零</dd>
+        </dl>
+      </div>
+      <div class="parity-col">
+        <h3><i aria-hidden="true"></i>电脑</h3>
+        <p class="sub">MOUSE / TRACKPAD</p>
+        <dl>
+          <dt>输入</dt><dd>按住左键拖动</dd>
+          <dt>事件</dt><dd><code>pointer*</code>（同一套）</dd>
+          <dt>阈值</dt><dd>35 CSS px</dd>
+          <dt>纵向滚动</dt><dd>不涉及，锁定后忽略</dd>
+          <dt>回弹</dt><dd>松手 180ms 归零</dd>
+        </dl>
+      </div>
+    </div>
+    <p class="parity-same">两端共用 <code>feed(dx)</code> 与 <code>shift(dir)</code>，不存在分支实现</p>
+    <p class="note" style="max-width:70ch">
+      为了真正一致，代码里刻意避开了三个坑：<b>不用 hover</b>（手机没有悬停态）；<b>阈值用固定 CSS px</b>，不做 <code>vw</code> 换算，否则不同屏宽手感会漂；
+      <b>拖动中禁止选中与高亮</b>，避免长按弹菜单打断滑动。
+    </p>
+  </section>
+
+  <!-- 05 HUD -->
+  <section id="hud-spec">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>HUD 布局</h2>
+      <p>顶部三栏，手势反馈走底部胶囊，不遮挡跑者</p>
+    </div>
+    <div class="hud-mock">
+      <div class="hm"><span>得分 SCORE</span><strong>1 240</strong></div>
+      <div class="hm center">
+        <span>当前路段</span>
+        <strong>晨雾松林 · 第 2 段</strong>
+        <div class="track"><i></i></div>
+      </div>
+      <div class="hm right"><span>速度</span><strong>24.0</strong></div>
+      <div class="gesture-float">← 左划　　右划 →</div>
+    </div>
+    <p class="note">窄屏时路段卡自动换到第一行，得分与速度并排留在下方——信息不删，只重排。</p>
+  </section>
+
+  <!-- 06 状态 -->
+  <section id="states">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2>状态与反馈</h2>
+      <p>颜色 + 音效 + 位移回弹三重确认，滑动时不必盯着 HUD</p>
+    </div>
+    <div class="table">
+      <div class="tr head"><span>状态</span><span>视觉</span><span>触发与动效</span></div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#9db3a4"></i>待机</span>
+        <span><code>#9db3a4</code></span>
+        <span>未按下或位移为 0。指示点停在中央，无提示音。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#bdda96"></i>滑动中</span>
+        <span><code>#bdda96</code></span>
+        <span>位移 8–35px。指示点跟手，阈值进度条实时填充。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#ffc85e"></i>变道成功</span>
+        <span><code>#ffc85e</code></span>
+        <span>越阈瞬间：指示点闪金 + 角色 260ms 弹性位移 + 短促「嗒」声，本次手势锁定。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#ed8f6e"></i>已触发</span>
+        <span><code>#ed8f6e</code></span>
+        <span>本次手势已经用掉，剩余位移被忽略，进度条变暗；抬手后自动复位。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#6f8579"></i>纵向手势</span>
+        <span><code>#6f8579</code></span>
+        <span>纵向位移大于横向时判为滚动，交给页面，不触发变道。</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <b>滑动变道 UI Kit v0.2</b><br>
+      为「熊出没 · 姿态跑酷」设计 · 滑动区与沙盘共用同一判定函数
+    </div>
+    <div style="text-align:right">
+      手指滑动 / 鼠标拖动即可体验<br>
+      手机与电脑行为一致
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var TH = 35;            // 触发阈值，CSS px，与 runner.js 一致
+  var LOCK = 8;           // 方向锁定
+  var COOL = 220;         // 两次手势之间的最小间隔
+  var lane = 1, dx = 0, lastFire = 0, gestureFired = false;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var pad = $("pad"), finger = $("finger");
+  var dxRead = $("dx-read"), padState = $("pad-state"), padLane = $("pad-lane");
+  var stage = $("stage"), runner = $("runner"), msg = $("stage-msg");
+  var pill = $("pill").children;
+  var hScore = $("h-score"), hSwipe = $("h-swipe");
+  var pDx = $("p-dx"), pDxBar = $("p-dx-bar");
+  var pTh = $("p-th"), pThBar = $("p-th-bar");
+  var pCool = $("p-cool"), pCoolBar = $("p-cool-bar");
+  var score = 0;
+
+  function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+
+  function render(){
+    dxRead.textContent = Math.round(dx) + "px";
+    pDx.textContent = Math.round(dx) + " px";
+    pDxBar.style.width = Math.min(100, Math.abs(dx) / (TH * 2) * 100) + "%";
+    var pct = Math.min(100, Math.abs(dx) / TH * 100);
+    pTh.textContent = Math.round(pct) + "%";
+    pThBar.style.width = pct + "%";
+
+    var since = performance.now() - lastFire;
+    if (gestureFired){
+      pCool.textContent = "已触发";
+      pCoolBar.style.width = "100%";
+      pCoolBar.style.background = "#ffc85e";
+    } else if (since < COOL && lastFire){
+      pCool.textContent = "等待";
+      pCoolBar.style.width = "40%";
+      pCoolBar.style.background = "#ed8f6e";
+    } else {
+      pCool.textContent = "未触发";
+      pCoolBar.style.width = "0%";
+      pCoolBar.style.background = "linear-gradient(90deg,#bdda96,#ffc85e)";
+    }
+
+    var st = "待机";
+    if (Math.abs(dx) >= TH) st = dx > 0 ? "右变道" : "左变道";
+    else if (Math.abs(dx) > LOCK) st = "滑动中";
+    padState.textContent = st;
+    padState.style.color = Math.abs(dx) >= TH ? "#ffc85e" : (Math.abs(dx) > LOCK ? "#bdda96" : "#6f8579");
+    pad.setAttribute("aria-valuenow", Math.round(dx));
+    hSwipe.textContent = Math.abs(dx) < 1 ? "—" : Math.round(dx) + "px";
+    padLane.textContent = lane + 1;
+    for (var i=0;i<3;i++) pill[i].classList.toggle("on", i === lane);
+
+    // 两侧阈值刻度位置：按板宽与 35px 阈值换算
+    var w = pad.clientWidth || 300;
+    var p = Math.min(48, TH / w * 100);
+    $("th-l").style.left = (50 - p) + "%";
+    $("th-r").style.left = (50 + p) + "%";
+    $("dead").style.width = (2 * p) + "%";
+    // 指示点：以 35px 阈值对应的可视宽度为满量程
+    finger.style.transform = "translateX(" + (clamp(dx / TH, -1.6, 1.6) * (w * p / 100)) + "px)";
+
+    var off = (lane - 1) * (stage.clientWidth || 640) * 0.145;
+    runner.style.transform = "translateX(-50%) translateX(" + off + "px)";
+  }
+
+  function showMsg(t){
+    msg.textContent = t;
+    msg.classList.add("show");
+    clearTimeout(showMsg._t);
+    showMsg._t = setTimeout(function(){ msg.classList.remove("show"); }, 700);
+  }
+
+  function shift(dir){
+    var next = clamp(lane + dir, 0, 2);
+    if (next === lane) return false;
+    lane = next;
+    score += 10;
+    hScore.textContent = score;
+    runner.classList.remove("bump");
+    void runner.offsetWidth;
+    runner.classList.add("bump");
+    showMsg(dir > 0 ? "右变道 →" : "← 左变道");
+    render();
+    return true;
+  }
+
+  /* 唯一的判定入口：手机与电脑都走这里，只负责位移与渲染 */
+  function feed(v){
+    dx = v;
+    render();
+  }
+
+  /* ── 通用滑动绑定（Pointer Events：触摸 / 鼠标 / 触控笔同源） ── */
+  function bindSwipe(el){
+    var startX = 0, startY = 0, active = false, axis = 0;
+
+    el.addEventListener("pointerdown", function(e){
+      if (e.button && e.button !== 0) return;
+      active = true; axis = 0; gestureFired = false;
+      startX = e.clientX; startY = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch(_) {}
+    });
+
+    el.addEventListener("pointermove", function(e){
+      if (!active || gestureFired) return;
+      var mx = e.clientX - startX;
+      var my = e.clientY - startY;
+      if (!axis){
+        if (Math.abs(mx) < LOCK && Math.abs(my) < LOCK) return;
+        axis = Math.abs(mx) >= Math.abs(my) ? 1 : 2;
+        if (axis === 2){ active = false; feed(0); return; }  // 纵向：交还页面滚动
+      }
+      // 一次手势只触发一次；抬手后才重新计数
+      var now = performance.now();
+      var v = mx;
+      if (Math.abs(v) >= TH && now - lastFire > COOL){
+        if (shift(v > 0 ? 1 : -1)){
+          lastFire = now;
+          gestureFired = true;
+          v = (v > 0 ? 1 : -1) * TH;
+        }
+      }
+      feed(v);
+    });
+
+    function end(){
+      if (!active) return;
+      active = false;
+      gestureFired = false;
+      // 回弹到 0
+      var from = dx, t0 = performance.now();
+      (function back(){
+        var k = Math.min(1, (performance.now() - t0) / 180);
+        feed(from * (1 - k));
+        if (k < 1) requestAnimationFrame(back);
+      })();
+    }
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+    el.addEventListener("lostpointercapture", end);
+  }
+
+  bindSwipe(pad);
+  bindSwipe(stage);
+
+  /* ── 键盘（仅桌面模拟） ── */
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A"){
+      e.preventDefault();
+      if (performance.now() - lastFire > COOL && shift(-1)){ lastFire = performance.now(); }
+      pulse(-1);
+    }
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D"){
+      e.preventDefault();
+      if (performance.now() - lastFire > COOL && shift(1)){ lastFire = performance.now(); }
+      pulse(1);
+    }
+  });
+
+  function pulse(dir){
+    var to = dir * TH * 1.1, from = dx, t0 = performance.now();
+    (function anim(){
+      var k = Math.min(1, (performance.now() - t0) / 260);
+      var e = 1 - Math.pow(1 - k, 3);
+      feed(from + (to - from) * e);
+      if (k < 1) requestAnimationFrame(anim);
+      else {
+        var s = performance.now();
+        (function back(){
+          var kk = Math.min(1, (performance.now() - s) / 220);
+          feed(to * (1 - kk));
+          if (kk < 1) requestAnimationFrame(back);
+        })();
+      }
+    })();
+  }
+
+  setInterval(function(){
+    score += 1;
+    hScore.textContent = score;
+  }, 1600);
+
+  window.addEventListener("resize", render);
+  render();
+})();
+</script>
+</body>
+</html>
