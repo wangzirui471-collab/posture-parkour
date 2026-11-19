@@ -83,14 +83,14 @@ def pick_person(people):
 def post(kps, url):
     data = json.dumps({"keypoints": kps, "width": 1, "height": 1}).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-    urllib.request.urlopen(req, timeout=0.3).read()
+    urllib.request.urlopen(req, timeout=0.5).read()
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", default=None, help="指定 latest_keypoints.json 路径")
     ap.add_argument("--url", default="http://127.0.0.1:8766/pose")
-    ap.add_argument("--fps", type=float, default=30)
+    ap.add_argument("--fps", type=float, default=60)
     ap.add_argument("--mirror", action="store_true", help="左右镜像坐标")
     ap.add_argument("--max-age", type=float, default=2.0,
                     help="骨骼文件超过这么多秒没更新就当作没信号（默认 2 秒）")
@@ -105,17 +105,33 @@ def main():
     last_m = 0
     last_path = None
     connected = False
+    path = None
+    m = 0.0
+    last_scan = 0.0
     while True:
-        path, m = (args.file, None) if args.file else latest_file()
-        if not path:
-            time.sleep(0.2)
-            continue
+        # 自动发现只在需要时扫目录：以前每轮都 glob 一遍所有 ROOTS，
+        # 30 帧/秒就是每秒 30 次目录遍历，白白给每一帧加几毫秒抖动。
         if args.file:
+            path = args.file
             try:
                 m = os.path.getmtime(path)
             except OSError:
-                time.sleep(0.1)
+                time.sleep(0.05)
                 continue
+        else:
+            now = time.time()
+            if path is None or now - last_scan > 1.0 or now - m > 1.5:
+                path, m = latest_file()
+                last_scan = now
+                if not path:
+                    time.sleep(0.2)
+                    continue
+            else:
+                try:
+                    m = os.path.getmtime(path)
+                except OSError:
+                    path = None
+                    continue
         if m == last_m:
             time.sleep(1.0 / max(1.0, args.fps))
             continue

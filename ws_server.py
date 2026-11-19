@@ -20,6 +20,7 @@ import base64
 import hashlib
 import json
 import random
+import select
 import socket
 import struct
 import sys
@@ -32,6 +33,8 @@ GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 ACTIONS = {"left", "right", "jump", "idle"}
 clients = set()
 clients_lock = threading.Lock()
+_fwd_count = 0
+_fwd_last = time.time()
 
 
 def log(msg):
@@ -165,6 +168,12 @@ def broadcast(message, source):
         targets = [c for c in clients if c.role == "game"]
     for c in targets:
         try:
+            # 一个卡住的浏览器不能拖住整条广播：发之前先看这个 socket 能不能写。
+            # 写不进去就跳过这一帧（下一帧再来），不能改 socket 的 timeout ——
+            # 那会连带影响 handle_client 里的 recv，游戏端会莫名被判超时断开。
+            _, writable, _ = select.select([], [c.sock], [], 0.02)
+            if not writable:
+                continue
             send_text(c.sock, message)
         except Exception:
             dead.append(c)
@@ -173,7 +182,17 @@ def broadcast(message, source):
             for c in dead:
                 clients.discard(c)
         log("清理断开的 game 客户端 %d 个" % len(dead))
-    log("转发 [%s] %s -> %d 个 game 客户端" % (source, message, len(targets) - len(dead)))
+    # 每帧都打一行日志是实打实的延迟来源：Windows 控制台一次写入约 1 ms，
+    # 30 帧/秒就是每秒 30 次，而且一旦 stdout 是没人读的管道还会直接堵死
+    # （实测 POST 从 15 ms 涨到 600 ms）。这里改成 5 秒汇总一行。
+    global _fwd_count, _fwd_last
+    _fwd_count += 1
+    now = time.time()
+    if now - _fwd_last >= 5.0:
+        log("转发 %s：%d 帧 / %.0f 秒 -> %d 个 game 客户端"
+            % (source, _fwd_count, now - _fwd_last, len(targets) - len(dead)))
+        _fwd_count = 0
+        _fwd_last = now
 
 
 def handle_client(conn, addr):
