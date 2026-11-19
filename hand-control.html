@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1a15">
+<title>手势变道 · UI 设计稿 | 熊出没 · 姿态跑酷</title>
+<style>
+:root{
+  color-scheme: dark;
+  --ink:#0b1a15;
+  --ink-2:#102a22;
+  --cream:#fff4d8;
+  --muted:#9db3a4;
+  --dim:#6f8579;
+  --gold:#ffc85e;
+  --lime:#bdda96;
+  --line:#eaf1d51f;
+  --line-2:#eaf1d536;
+  --surface:#ffffff08;
+  --edge:clamp(18px,5vw,84px);
+  --font:"Microsoft YaHei","PingFang SC","Heiti SC","Hiragino Sans GB",system-ui,sans-serif;
+  --mono:"Trebuchet MS","SF Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--font);color:var(--cream);background:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 520px at 82% -8%,#1d4536 0%,transparent 62%),
+    radial-gradient(700px 480px at 4% 8%,#173a2d 0%,transparent 58%),
+    radial-gradient(800px 600px at 50% 108%,#122e24 0%,transparent 60%);
+  background-attachment:fixed;
+}
+/* 细网格纹理 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(circle at 50% 22%,#000 0%,transparent 78%);
+}
+.wrap{position:relative;z-index:1}
+
+/* ───────── 顶栏 ───────── */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px var(--edge);
+  background:#0b1a15cc;backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.03em;font-size:15px}
+.brand-mark{
+  display:grid;place-items:center;width:40px;height:40px;border-radius:13px;
+  background:linear-gradient(160deg,#d8eeae,#a8cd7f);color:#123024;
+  font:900 30px/1 Georgia,serif;padding-bottom:5px;
+  box-shadow:0 4px 16px #bdda9626;
+}
+.brand small{display:block;color:var(--dim);font-size:10px;font-weight:800;letter-spacing:.22em;margin-top:3px}
+.topbar-meta{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted)}
+.tag{
+  padding:7px 12px;border:1px solid var(--line-2);border-radius:100px;
+  background:var(--surface);letter-spacing:.06em;white-space:nowrap;
+}
+.tag.live{color:var(--lime);border-color:#bdda9640}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lime);margin-right:7px;
+  box-shadow:0 0 10px var(--lime);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ───────── 布局骨架 ───────── */
+section{padding:clamp(52px,9vh,110px) var(--edge)}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:clamp(24px,4vh,44px);flex-wrap:wrap}
+.sec-num{
+  font:800 12px/1 var(--mono);color:var(--gold);letter-spacing:.2em;
+  padding:6px 10px;border:1px solid #ffc85e33;border-radius:8px;background:#ffc85e0f;
+}
+.sec-head h2{margin:0;font-size:clamp(22px,2.6vw,34px);font-weight:950;letter-spacing:-.02em}
+.sec-head p{margin:0;color:var(--dim);font-size:13px;letter-spacing:.04em}
+
+/* ───────── Hero ───────── */
+.hero{padding-top:clamp(38px,7vh,86px);padding-bottom:clamp(18px,3vh,34px);display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,64px);align-items:center}
+@media(max-width:940px){.hero{grid-template-columns:1fr}}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;color:var(--lime);
+  font-size:11px;font-weight:900;letter-spacing:.24em;margin:0 0 20px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--lime);display:block}
+h1{
+  margin:0;font-size:clamp(42px,6.4vw,86px);font-weight:1000;line-height:1.02;letter-spacing:-.055em;
+}
+h1 em{font-style:normal;color:var(--gold)}
+.hero-copy{margin:22px 0 0;color:#c6d5c6;font-size:clamp(13px,1.3vw,16px);line-height:1.85;max-width:44ch}
+.hero-copy b{color:var(--cream);font-weight:800}
+.hero-copy code{font-family:var(--mono);background:#ffffff10;padding:1px 6px;border-radius:5px;color:var(--lime);font-size:.92em}
+.specs{display:flex;flex-wrap:wrap;gap:0;margin:30px 0 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);max-width:520px}
+.specs li{flex:1 1 33%;min-width:110px;padding:14px 16px}
+.specs li+li{border-left:1px solid var(--line)}
+.specs span{display:block;color:var(--dim);font-size:10px;letter-spacing:.12em;margin-bottom:7px}
+.specs strong{font:800 19px/1 var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}
+
+/* ───────── 手势轨道 ───────── */
+.rail-card{
+  position:relative;padding:clamp(20px,3vw,30px);border-radius:22px;
+  border:1px solid var(--line-2);
+  background:linear-gradient(165deg,#16382c,#0e241d 55%,#0c1f19);
+  box-shadow:0 26px 70px -30px #000,inset 0 1px 0 #ffffff0d;
+  overflow:hidden;
+}
+.rail-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(340px 160px at 50% 0%,#bdda9614,transparent 70%);
+}
+.rail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;position:relative;z-index:1}
+.rail-head strong{font-size:13px;letter-spacing:.08em}
+.rail-head span{font:800 11px/1 var(--mono);color:var(--dim);letter-spacing:.1em}
+.rail{
+  position:relative;height:74px;border-radius:16px;border:1px solid var(--line-2);
+  background:#081410;overflow:hidden;touch-action:none;cursor:grab;
+  display:flex;align-items:center;
+}
+.rail:active{cursor:grabbing}
+.rail-zone{position:absolute;top:0;bottom:0;width:50%;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.rail-zone.left{left:0;background:linear-gradient(90deg,#ffc85e1f,transparent 82%);justify-content:flex-start}
+.rail-zone.right{right:0;background:linear-gradient(270deg,#ffc85e1f,transparent 82%);justify-content:flex-end}
+.rail-zone i{font-style:normal;font-size:10px;letter-spacing:.16em;color:#ffc85e88;font-weight:900;white-space:nowrap}
+.rail-dead{
+  position:absolute;left:50%;top:0;bottom:0;width:32.2%;transform:translateX(-50%);
+  border-left:1px dashed #eaf1d52e;border-right:1px dashed #eaf1d52e;
+  background:#ffffff06;
+}
+.rail-dead em{position:absolute;left:50%;top:7px;transform:translateX(-50%);font-style:normal;font-size:9px;letter-spacing:.14em;color:var(--dim);white-space:nowrap}
+.rail-th{position:absolute;top:0;bottom:0;width:2px;background:#ffc85e66}
+.rail-th.l{left:33.9%}
+.rail-th.r{left:66.1%}
+.hand{
+  position:absolute;top:50%;left:50%;width:56px;height:56px;margin:-28px 0 0 -28px;
+  border-radius:50%;display:grid;place-items:center;font-size:24px;
+  background:radial-gradient(circle at 38% 32%,#ffe6a8,#ffc85e 62%,#e0a53c);
+  color:#4a3410;box-shadow:0 0 0 6px #ffc85e1f,0 10px 30px -6px #ffc85e66;
+  transition:transform .08s linear,box-shadow .2s;
+  will-change:transform;
+}
+.hand::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid #ffc85e33}
+.rail-meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font:800 11px/1 var(--mono);color:var(--dim);letter-spacing:.08em;position:relative;z-index:1}
+.rail-meta b{color:var(--lime);font-size:13px}
+.rail-hint{margin:18px 0 0;color:var(--dim);font-size:11.5px;letter-spacing:.06em;text-align:center;position:relative;z-index:1}
+
+/* ───────── 原理三步 ───────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{background:#0d221b;padding:clamp(20px,2.6vw,30px);position:relative}
+.step:hover{background:#112b21}
+.step-n{font:800 10px/1 var(--mono);color:var(--gold);letter-spacing:.2em;margin-bottom:16px;display:block}
+.step h3{margin:0 0 10px;font-size:16px;font-weight:900;letter-spacing:-.01em}
+.step p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.8}
+.step code{font-family:var(--mono);background:#ffffff0f;padding:2px 6px;border-radius:5px;color:var(--lime);font-size:11.5px}
+.step-fig{height:52px;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.bar{height:6px;border-radius:3px;background:#ffffff17;flex:1;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;width:38%;background:linear-gradient(90deg,#bdda96,#ffc85e);border-radius:3px}
+
+/* ───────── 沙盘 ───────── */
+.lab-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(20px,3vw,32px);align-items:start}
+@media(max-width:980px){.lab-grid{grid-template-columns:1fr}}
+.stage{
+  position:relative;aspect-ratio:16/10;min-height:300px;border-radius:22px;overflow:hidden;
+  border:1px solid var(--line-2);background:#08170f;
+  touch-action:pan-y;cursor:grab;user-select:none;
+  box-shadow:0 30px 80px -40px #000,inset 0 0 90px #00000066;
+}
+.stage:active{cursor:grabbing}
+/* 场景 */
+.sky{position:absolute;inset:0;background:linear-gradient(180deg,#0a231b,#164133 46%,#1b4a33 62%,#12301f)}
+.sky::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(420px 200px at 50% 78%,#ffc85e2e,transparent 70%),
+             radial-gradient(600px 300px at 8% 8%,#bdda9618,transparent 70%);
+}
+.hill{position:absolute;left:-6%;right:-6%;bottom:32%;height:34%;background:#0f3826;border-radius:50% 50% 0 0/100% 100% 0 0;opacity:.85}
+.hill.b{bottom:36%;height:26%;background:#133f2a;opacity:.6;left:22%;right:-18%}
+.road{
+  position:absolute;left:0;right:0;bottom:0;height:40%;
+  background:linear-gradient(180deg,#1a3a2a,#0d1f17);
+  clip-path:polygon(41% 0,59% 0,80% 100%,20% 100%);
+}
+.lane-lines{position:absolute;left:0;right:0;bottom:0;height:40%;overflow:hidden}
+.lane-lines i{
+  position:absolute;top:-20%;width:3px;height:26%;border-radius:2px;
+  background:linear-gradient(180deg,transparent,#bdda9677,transparent);
+  animation:dash 1.05s linear infinite;
+}
+.lane-lines i:nth-child(1){left:43%}
+.lane-lines i:nth-child(2){left:57%}
+.lane-lines i:nth-child(3){left:36%;animation-delay:.35s;height:16%;opacity:.55}
+.lane-lines i:nth-child(4){left:64%;animation-delay:.35s;height:16%;opacity:.55}
+@keyframes dash{from{transform:translateY(-40%)}to{transform:translateY(460%)}}
+/* 障碍 */
+.rocks{position:absolute;left:0;right:0;bottom:0;height:44%;pointer-events:none;overflow:hidden}
+.rock{
+  position:absolute;top:0;width:30px;height:26px;
+  border-radius:9px 13px 7px 10px;
+  background:linear-gradient(150deg,#71805b,#39452f);
+  box-shadow:inset 0 -5px 10px #00000055,0 6px 16px #00000055;
+  animation:rush 2.1s linear infinite;
+}
+@keyframes rush{
+  0%{top:-12%;transform:scale(.3);opacity:0}
+  16%{opacity:.95}
+  100%{top:70%;transform:scale(1.15);opacity:1}
+}
+/* 树影 */
+.trees{position:absolute;left:0;right:0;bottom:34%;height:24%;pointer-events:none}
+.trees i{
+  position:absolute;bottom:0;width:0;height:0;
+  border-left:10px solid transparent;border-right:10px solid transparent;
+  border-bottom:32px solid #0a2a1b;opacity:.8;
+}
+/* 跑者 */
+.runner{
+  position:absolute;bottom:16%;left:50%;width:clamp(40px,7%,66px);
+  transform:translateX(-50%);transition:transform .26s cubic-bezier(.3,1.5,.45,1);
+  filter:drop-shadow(0 10px 18px #00000088);z-index:4;
+}
+.runner svg{display:block;width:100%;height:auto}
+.runner.bump svg{animation:bump .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bump{50%{transform:translateY(-13px) scale(1.07)}}
+/* 沙盘 HUD */
+.stage-hud{position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;z-index:6;pointer-events:none}
+.hud-chip{
+  padding:7px 11px;border-radius:10px;border:1px solid var(--line-2);
+  background:#06120ed9;backdrop-filter:blur(8px);font:800 11px/1 var(--mono);letter-spacing:.06em;
+}
+.hud-chip span{display:block;color:var(--dim);font-size:8.5px;letter-spacing:.14em;margin-bottom:5px}
+.hud-chip b{font-size:14px;color:var(--cream)}
+.lane-pill{display:flex;gap:4px;margin-top:2px;justify-content:center}
+.lane-pill i{width:16px;height:4px;border-radius:2px;background:#ffffff22;transition:background .2s,width .2s}
+.lane-pill i.on{background:var(--gold);width:22px}
+.stage-msg{
+  position:absolute;left:50%;bottom:22%;transform:translateX(-50%);z-index:5;
+  font:900 11px/1 var(--font);letter-spacing:.2em;color:var(--gold);
+  opacity:0;transition:opacity .18s,transform .18s;white-space:nowrap;
+}
+.stage-msg.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
+
+/* 控制面板 */
+.panel{display:flex;flex-direction:column;gap:14px}
+.card{
+  border:1px solid var(--line);border-radius:18px;padding:clamp(16px,2.2vw,22px);
+  background:linear-gradient(170deg,#ffffff09,#ffffff03);
+}
+.card h4{margin:0 0 14px;font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:900}
+.meter{margin-bottom:16px}
+.meter:last-child{margin-bottom:0}
+.meter-top{display:flex;justify-content:space-between;font:800 11px/1 var(--mono);color:var(--dim);margin-bottom:9px;letter-spacing:.06em}
+.meter-top b{color:var(--cream)}
+.meter-bar{height:8px;border-radius:5px;background:#ffffff12;position:relative;overflow:hidden}
+.meter-bar i{position:absolute;inset:0;width:0%;border-radius:5px;background:linear-gradient(90deg,var(--lime),var(--gold));transition:width .1s linear}
+.meter-bar::after{content:"";position:absolute;top:0;bottom:0;left:82%;width:2px;background:#ffc85e88}
+.keys{display:flex;gap:8px;flex-wrap:wrap}
+kbd{
+  font-family:var(--mono);font-size:11px;font-weight:800;padding:7px 11px;border-radius:8px;
+  background:#ffffff0d;border:1px solid var(--line-2);border-bottom-width:2px;color:#dbe7c7;
+}
+.note{color:var(--dim);font-size:11.5px;line-height:1.75;margin:12px 0 0}
+
+/* ───────── HUD 布局稿 ───────── */
+.hud-mock{
+  position:relative;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;
+  background:#0a1d16;padding:16px;min-height:190px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:12px;
+}
+.hm{background:#ffffff0a;border:1px solid var(--line);border-radius:12px;padding:10px 13px;min-width:84px}
+.hm span{display:block;font-size:9px;letter-spacing:.12em;color:var(--dim);margin-bottom:6px}
+.hm strong{font:800 22px/1 var(--mono);font-variant-numeric:tabular-nums}
+.hm.center{justify-self:center;width:100%;max-width:260px;text-align:center}
+.hm.center strong{font:900 13px/1.4 var(--font)}
+.hm.center .track{height:4px;border-radius:2px;background:#ffffff17;margin-top:12px;overflow:hidden}
+.hm.center .track i{display:block;height:100%;width:42%;background:var(--gold);border-radius:2px}
+.hm.right{justify-self:end}
+.gesture-float{
+  position:absolute;left:50%;bottom:16px;transform:translateX(-50%);
+  padding:8px 16px;border-radius:100px;border:1px solid #ffc85e33;background:#ffc85e12;
+  color:var(--gold);font:800 10.5px/1 var(--font);letter-spacing:.16em;white-space:nowrap;
+}
+
+/* ───────── 状态表 ───────── */
+.table{border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.tr{display:grid;grid-template-columns:1.1fr 1fr 1.5fr;gap:14px;padding:15px clamp(14px,2vw,22px);align-items:center;font-size:12.5px}
+.tr.head{background:#ffffff08;color:var(--dim);font-size:10px;letter-spacing:.14em;font-weight:900}
+.tr+.tr{border-top:1px solid var(--line)}
+@media(max-width:720px){.tr{grid-template-columns:1fr;gap:6px}.tr.head{display:none}}
+.swatch{display:inline-flex;align-items:center;gap:9px;font-weight:800}
+.swatch i{width:9px;height:9px;border-radius:50%;display:block;flex:none}
+.tr span:last-child{color:var(--muted);line-height:1.65}
+.tr code{font-family:var(--mono);font-size:11px;color:var(--lime);background:#ffffff0d;padding:2px 6px;border-radius:5px}
+
+/* ───────── 页脚 ───────── */
+footer{
+  padding:clamp(32px,6vh,64px) var(--edge);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  color:var(--dim);font-size:11.5px;line-height:1.8;
+}
+footer b{color:var(--muted)}
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);z-index:60;
+  padding:11px 20px;border-radius:100px;background:#ffc85e;color:#3b2a09;
+  font:900 12px/1 var(--font);letter-spacing:.1em;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;box-shadow:0 14px 40px -10px #000000aa;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">⌁</span>
+      <div>手势变道 UI<small>GESTURE LANE CONTROL</small></div>
+    </div>
+    <div class="topbar-meta">
+      <span class="tag live"><span class="dot"></span>设计稿 v0.1</span>
+      <span class="tag">熊出没 · 姿态跑酷</span>
+    </div>
+  </header>
+
+  <!-- 01 HERO -->
+  <section class="hero" id="top">
+    <div>
+      <p class="eyebrow">01 / 控制原理</p>
+      <h1>手一挥，<br><em>就变道。</em></h1>
+      <p class="hero-copy">
+        不使用倾斜、不需要按键。摄像头取<b>手部中心点</b>，换算成相对肩中线的水平偏移 <code>dx</code>；
+        当 <code>|dx|</code> 越过死区阈值，即向对应方向切一条道。手势从哪边划过，角色就往哪边走。
+      </p>
+      <ul class="specs">
+        <li><span>触发阈值</span><strong>±0.35</strong></li>
+        <li><span>动作冷却</span><strong>320ms</strong></li>
+        <li><span>变道用时</span><strong>260ms</strong></li>
+        <li><span>死区宽度</span><strong>30%</strong></li>
+        <li><span>识别置信</span><strong>0.60</strong></li>
+        <li><span>车道数</span><strong>3</strong></li>
+      </ul>
+    </div>
+
+    <div class="rail-card">
+      <div class="rail-head">
+        <strong>手势滑轨</strong>
+        <span>DRAG TO TEST</span>
+      </div>
+      <div class="rail" id="rail" role="slider" aria-label="手势水平偏移" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" tabindex="0">
+        <div class="rail-zone left"><i>← 左变道</i></div>
+        <div class="rail-zone right"><i>右变道 →</i></div>
+        <div class="rail-dead"></div>
+        <div class="rail-th l"></div><div class="rail-th r"></div>
+        <div class="hand" id="hand" aria-hidden="true">✋</div>
+      </div>
+      <div class="rail-meta">
+        <span>dx <b id="dx-read">0.00</b></span>
+        <span>状态 <b id="rail-state">待机</b></span>
+        <span>车道 <b id="rail-lane">2</b></span>
+      </div>
+      <p class="rail-hint">在滑轨上左右拖动，模拟手掌水平位移</p>
+    </div>
+  </section>
+
+  <!-- 02 三步原理 -->
+  <section id="principle">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>三段式判定</h2>
+      <p>取点 → 归一化 → 越阈触发，单帧即可出结果</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <span class="step-n">STEP 1</span>
+        <div class="step-fig"><div class="bar"><i style="width:22%"></i></div></div>
+        <h3>取手部中心点</h3>
+        <p>从 33 点骨骼中取左右手腕与掌心，求加权中点，得到手掌锚点 <code>handX</code>，屏蔽单点抖动。</p>
+      </article>
+      <article class="step">
+        <span class="step-n">STEP 2</span>
+        <div class="step-fig"><div class="bar"><i style="width:52%"></i></div></div>
+        <h3>换算水平偏移</h3>
+        <p>用肩宽做尺度归一化：<code>dx = (handX − shoulderX) / shoulderW</code>，与距离、体型无关，远近都能用。</p>
+      </article>
+      <article class="step">
+        <span class="step-n">STEP 3</span>
+        <div class="step-fig"><div class="bar"><i style="width:88%"></i></div></div>
+        <h3>越阈触发变道</h3>
+        <p>连续 3 帧 <code>|dx| &gt; 0.35</code> 且方向一致即触发，随后进入 320ms 冷却，避免一次挥手连跳两道。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 03 沙盘 -->
+  <section id="lab">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>交互沙盘</h2>
+      <p>真手势尚未接入时，用拖动 / 方向键预览手感</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="stage" id="stage" aria-label="跑酷沙盘，左右拖动切换车道">
+        <div class="sky"></div>
+        <div class="hill"></div>
+        <div class="hill b"></div>
+        <div class="road"></div>
+        <div class="lane-lines"><i></i><i></i><i></i><i></i></div>
+        <div class="trees" aria-hidden="true">
+          <i style="left:3%;transform:scale(1.35)"></i>
+          <i style="left:13%;transform:scale(.8)"></i>
+          <i style="left:24%;transform:scale(1.1)"></i>
+          <i style="right:6%;transform:scale(1.25)"></i>
+          <i style="right:17%;transform:scale(.9)"></i>
+          <i style="right:27%;transform:scale(1.05)"></i>
+        </div>
+        <div class="rocks" aria-hidden="true">
+          <span class="rock" style="left:34%;animation-delay:0s"></span>
+          <span class="rock" style="left:41%;animation-delay:.7s"></span>
+          <span class="rock" style="left:49%;animation-delay:1.45s"></span>
+          <span class="rock" style="left:56%;animation-delay:.35s"></span>
+          <span class="rock" style="left:63%;animation-delay:1.1s"></span>
+          <span class="rock" style="left:45%;animation-delay:1.8s"></span>
+        </div>
+
+        <div class="stage-hud">
+          <div class="hud-chip"><span>得分</span><b id="h-score">0</b></div>
+          <div class="hud-chip" style="text-align:center"><span>车道</span><div class="lane-pill" id="pill"><i></i><i></i><i></i></div></div>
+          <div class="hud-chip" style="text-align:right"><span>手势</span><b id="h-gesture">—</b></div>
+        </div>
+
+        <div class="runner" id="runner" style="--lane:0">
+          <svg viewBox="0 0 60 84" aria-hidden="true">
+            <ellipse cx="30" cy="80" rx="17" ry="4" fill="#000" opacity=".45"/>
+            <ellipse cx="30" cy="66" rx="14" ry="14" fill="#8a5a2c"/>
+            <circle cx="30" cy="30" r="17" fill="#a06a33"/>
+            <circle cx="23.5" cy="26" r="4.6" fill="#2a1a0c"/>
+            <circle cx="36.5" cy="26" r="4.6" fill="#2a1a0c"/>
+            <circle cx="24.4" cy="24.4" r="1.5" fill="#fff" opacity=".85"/>
+            <circle cx="35.6" cy="24.4" r="1.5" fill="#fff" opacity=".85"/>
+            <ellipse cx="30" cy="37" rx="6" ry="4.4" fill="#e8c9a0"/>
+            <ellipse cx="30" cy="35.4" rx="2.6" ry="1.9" fill="#3a2513"/>
+            <circle cx="13.5" cy="18" r="4.4" fill="#a06a33"/>
+            <circle cx="46.5" cy="18" r="4.4" fill="#a06a33"/>
+            <ellipse cx="18" cy="60" rx="6" ry="9" fill="#7d4f26" transform="rotate(-18 18 60)"/>
+            <ellipse cx="42" cy="60" rx="6" ry="9" fill="#7d4f26" transform="rotate(18 42 60)"/>
+          </svg>
+        </div>
+        <div class="stage-msg" id="stage-msg"></div>
+      </div>
+
+      <div class="panel">
+        <div class="card">
+          <h4>实时读数</h4>
+          <div class="meter">
+            <div class="meter-top"><span>水平偏移 dx</span><b id="p-dx">0.00</b></div>
+            <div class="meter-bar"><i id="p-dx-bar"></i></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>识别置信度</span><b id="p-conf">0.87</b></div>
+            <div class="meter-bar"><i id="p-conf-bar" style="width:87%"></i></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>稳定帧数</span><b id="p-hold">0 / 3</b></div>
+            <div class="meter-bar"><i id="p-hold-bar" style="width:0%"></i></div>
+          </div>
+          <p class="note">三条读数全部达标才会触发变道；任一回落即清零重计。</p>
+        </div>
+
+        <div class="card">
+          <h4>操作方式</h4>
+          <div class="keys">
+            <kbd>←</kbd><kbd>→</kbd><kbd>拖动画面</kbd><kbd>触屏滑动</kbd>
+          </div>
+          <p class="note">键盘与拖动为降级方案，正式接入后由摄像头手势主导，两者共用同一判定管线。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 HUD -->
+  <section id="hud-spec">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>HUD 布局</h2>
+      <p>顶部三栏，手势反馈走底部胶囊，不遮挡跑者</p>
+    </div>
+    <div class="hud-mock">
+      <div class="hm"><span>得分 SCORE</span><strong>1 240</strong></div>
+      <div class="hm center">
+        <span>当前路段</span>
+        <strong>晨雾松林 · 第 2 段</strong>
+        <div class="track"><i></i></div>
+      </div>
+      <div class="hm right"><span>速度 KM/H</span><strong>24.0</strong></div>
+      <div class="gesture-float">← 左变道　　右变道 →</div>
+    </div>
+  </section>
+
+  <!-- 05 反馈规范 -->
+  <section id="states">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>状态与反馈</h2>
+      <p>颜色 + 音效 + 抖动三重确认，手势不必盯着看</p>
+    </div>
+    <div class="table">
+      <div class="tr head"><span>状态</span><span>视觉</span><span>触发与动效</span></div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#9db3a4"></i>待机</span>
+        <span><code>#9db3a4</code></span>
+        <span>手在死区内。滑轨中央手标静止，无提示音。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#bdda96"></i>识别中</span>
+        <span><code>#bdda96</code></span>
+        <span>手已入画但未越阈。滑轨描边渐亮，显示实时 dx 数值。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#ffc85e"></i>变道成功</span>
+        <span><code>#ffc85e</code></span>
+        <span>手标闪金 + 角色 260ms 弹性位移 + 短促「嗒」声，滑轨方向高亮 180ms。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#ed8f6e"></i>冷却中</span>
+        <span><code>#ed8f6e</code></span>
+        <span>320ms 内重复同类手势被吞掉，滑轨变暗提示，不弹错误。</span>
+      </div>
+      <div class="tr">
+        <span class="swatch"><i style="background:#6f8579"></i>丢失跟踪</span>
+        <span><code>#6f8579</code></span>
+        <span>手离开画面 &gt; 1s，滑轨降透明到 40%，恢复后自动接续，不打断游戏。</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <b>手势变道 UI Kit v0.1</b><br>
+      为「熊出没 · 姿态跑酷」设计 · 判定管线与 <code>runner.js</code> 的 tiltState 共用
+    </div>
+    <div style="text-align:right">
+      拖动滑轨或沙盘即可体验<br>
+      正式接入需摄像头与 33 点骨骼数据
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+  "use strict";
+  var TH = 0.35, HOLD = 3, COOL = 320;
+  var lane = 1;            // 0 左 / 1 中 / 2 右
+  var dx = 0;
+  var holdCount = 0, holdDir = 0, lastFire = 0;
+  var $ = function(id){ return document.getElementById(id); };
+
+  var hand = $("hand"), rail = $("rail");
+  var dxRead = $("dx-read"), railState = $("rail-state"), railLane = $("rail-lane");
+  var runner = $("runner"), stage = $("stage"), msg = $("stage-msg");
+  var pill = $("pill").children;
+  var hScore = $("h-score"), hGesture = $("h-gesture");
+  var pDx = $("p-dx"), pDxBar = $("p-dx-bar"), pHold = $("p-hold"), pHoldBar = $("p-hold-bar");
+  var score = 0, scoreTimer = null;
+
+  function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+
+  function render(){
+    var railW = rail.clientWidth || 480;
+    hand.style.transform = "translateX(" + (dx * railW * 0.46) + "px)";
+    dxRead.textContent = (dx>=0?"+":"") + dx.toFixed(2);
+    pDx.textContent = dxRead.textContent;
+    pDxBar.style.width = Math.abs(dx) * 100 + "%";
+    var st = "待机";
+    if (Math.abs(dx) > TH) st = dx > 0 ? "右变道" : "左变道";
+    else if (Math.abs(dx) > 0.08) st = "识别中";
+    railState.textContent = st;
+    railState.style.color = Math.abs(dx) > TH ? "#ffc85e" : (Math.abs(dx) > 0.08 ? "#bdda96" : "#6f8579");
+    rail.setAttribute("aria-valuenow", dx.toFixed(2));
+    hGesture.textContent = st === "待机" ? "—" : st;
+    railLane.textContent = lane + 1;
+    for (var i=0;i<3;i++) pill[i].classList.toggle("on", i === lane);
+    var off = (lane - 1) * (stage.clientWidth || 640) * 0.145;
+    runner.style.transform = "translateX(-50%) translateX(" + off + "px)";
+  }
+
+  function showMsg(text){
+    msg.textContent = text;
+    msg.classList.add("show");
+    clearTimeout(showMsg._t);
+    showMsg._t = setTimeout(function(){ msg.classList.remove("show"); }, 720);
+  }
+
+  function shift(dir){
+    var next = clamp(lane + dir, 0, 2);
+    if (next === lane) return false;
+    lane = next;
+    score += 10;
+    hScore.textContent = score;
+    runner.classList.remove("bump");
+    void runner.offsetWidth;
+    runner.classList.add("bump");
+    showMsg(dir > 0 ? "右变道 →" : "← 左变道");
+    render();
+    return true;
+  }
+
+  var armed = true;
+  function feed(v){
+    var now = performance.now();
+    dx = clamp(v, -1, 1);
+    if (Math.abs(dx) < TH * 0.6) armed = true;   // 回中后才允许下一次触发
+    var dir = Math.abs(dx) > TH ? (dx > 0 ? 1 : -1) : 0;
+    if (dir && dir === holdDir) holdCount++;
+    else { holdDir = dir; holdCount = dir ? 1 : 0; }
+    pHold.textContent = holdCount + " / " + HOLD;
+    pHoldBar.style.width = Math.min(100, holdCount / HOLD * 100) + "%";
+    pHoldBar.style.background = holdCount >= HOLD ? "linear-gradient(90deg,#bdda96,#ffc85e)" : "#ffffff33";
+    if (armed && holdCount >= HOLD && dir && now - lastFire > COOL){
+      if (shift(dir)) { lastFire = now; holdCount = 0; armed = false; }
+    }
+    render();
+  }
+
+  /* ── 滑轨拖动 ── */
+  var railAnchor = null;
+  rail.addEventListener("pointerdown", function(e){
+    railAnchor = e.clientX;
+    rail.setPointerCapture(e.pointerId);
+    feed(0);
+  });
+  rail.addEventListener("pointermove", function(e){
+    if (railAnchor === null) return;
+    feed((e.clientX - railAnchor) / (rail.clientWidth * 0.5));
+  });
+  function railEnd(e){
+    if (railAnchor === null) return;
+    railAnchor = null;
+    // 回弹
+    var start = dx, t0 = performance.now();
+    (function back(){
+      var k = Math.min(1, (performance.now() - t0) / 220);
+      feed(start * (1 - k));
+      if (k < 1) requestAnimationFrame(back);
+    })();
+  }
+  rail.addEventListener("pointerup", railEnd);
+  rail.addEventListener("pointercancel", railEnd);
+
+  /* ── 沙盘拖动 ── */
+  var sAnchor = null, sx0 = 0, sy0 = 0, locked = false;
+  stage.addEventListener("pointerdown", function(e){
+    sAnchor = e.clientX; sx0 = e.clientX; sy0 = e.clientY; locked = false;
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove", function(e){
+    if (sAnchor === null) return;
+    var ddx = e.clientX - sx0, ddy = e.clientY - sy0;
+    if (!locked){
+      if (Math.abs(ddy) > Math.abs(ddx) && Math.abs(ddy) > 18) { sAnchor = null; return; }
+      if (Math.abs(ddx) < 26) return;
+      locked = true;
+    }
+    feed((e.clientX - sAnchor) / (stage.clientWidth * 0.5));
+  });
+  stage.addEventListener("pointerup", function(){
+    sAnchor = null;
+    var start = dx, t0 = performance.now();
+    (function back(){
+      var k = Math.min(1, (performance.now() - t0) / 200);
+      feed(start * (1 - k));
+      if (k < 1) requestAnimationFrame(back);
+    })();
+  });
+
+  /* ── 键盘 ── */
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A"){ e.preventDefault(); shift(-1); flash(-0.7); }
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D"){ e.preventDefault(); shift(1); flash(0.7); }
+  });
+  function flash(v){
+    var start = dx, t0 = performance.now();
+    (function anim(){
+      var k = Math.min(1, (performance.now() - t0) / 300);
+      dx = start + (v - start) * k;
+      render();
+      if (k < 1) setTimeout(anim, 16);
+    })();
+  }
+
+  /* ── 分数缓增 ── */
+  scoreTimer = setInterval(function(){
+    score += 1;
+    hScore.textContent = score;
+  }, 1400);
+
+  window.addEventListener("resize", render);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -12,11 +12,20 @@
 | `runner-obstacles.js` / `runner-new-obstacles.js` | 各关的障碍模型、碰撞范围和动画 |
 | `runner-gear.js` | 可拾取道具、头部护罩、脚部弹跳鞋和火箭背包 |
 | `runner-model.js` / `runner-series-model.js` / `assets/` | 角色模型、贴图、骨骼绑定及跑步和追逐动作 |
+| `hand-control.html` | 手势变道 UI 设计稿（独立页面，可交互原型）|
 | `vendor/` | 随附的 Three.js r128 和 GLTFLoader |
 | `ws_server.py` | 本地 WebSocket 转发服务（Python 标准库，零依赖）|
 | `start_runner.cmd` | 正式启动器：启动桥接 + 打开游戏 |
 | `start_runner_demo.cmd` | 演示启动器：带 `--demo` 模拟动作 |
 | `姿态映射参数说明.md` | 各阈值含义、默认值、调试步骤 |
+
+## 手势变道 UI 设计稿
+
+`hand-control.html` 是一份独立的手势控制设计稿与可交互原型，打开即可体验，无需摄像头：
+
+- **原理**：摄像头取手部中心点，用肩宽归一化得到水平偏移 `dx`；连续 3 帧 `|dx| > 0.35` 即触发对应方向变道，随后 320ms 冷却，回中后才允许下一次触发。
+- **交互**：拖动「手势滑轨」或沙盘画面即可模拟挥手，也可用 `←` / `→` 降级操作。
+- **内容**：控制原理三步拆解、实时读数面板、HUD 布局稿、状态与反馈规范。
 
 ## 上位机入口集成与桌面快捷方式
 
